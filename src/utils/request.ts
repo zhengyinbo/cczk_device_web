@@ -30,6 +30,9 @@ instance.interceptors.request.use(
     const {token} = store.state.user  // 从 Vuex 里取
     if (token) {
       // config.headers.Authorization = `Bearer ${token}`  // 常见写法
+      console.log("token - ")
+      console.log(token)
+      console.log("token = ")
       config.headers.token = token
       // 也可能是 config.headers['token'] = token
       // 具体看你们后端怎么要求的

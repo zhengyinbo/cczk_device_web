@@ -36,13 +36,16 @@ const getters = {
 
 const actions = {
   async initRoutes({ commit }, roles) {
+    console.log(roles)
     let accessedRouters;
 
     // special token
     if (roles.includes('ALL_ROUTERS')) {
       accessedRouters = asyncRouterList;
     } else {
-      accessedRouters = filterPermissionsRouters(asyncRouterList, roles);
+      accessedRouters = asyncRouterList;
+      // 路由在这里过滤
+      // accessedRouters = filterPermissionsRouters(asyncRouterList, roles);
     }
 
     commit('setRouters', accessedRouters);

@@ -51,4 +51,28 @@ export default [
       },
     ],
   },
+  {
+    path: '/device',
+    component: Layout,
+    redirect: '/device/index',
+    name: 'device',
+    meta: {
+      title: '设备管理',
+      icon: 'widget',
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'DeviceCate',
+        component: () => import('@/pages/device/cate.vue'),
+        meta: { title: '设备类型管理'},
+      },
+      {
+        path: 'detail',
+        name: 'Device',
+        component: () => import('@/pages/device/index.vue'),
+        meta: { title: '设备管理' },
+      },
+    ],
+  },
 ];
