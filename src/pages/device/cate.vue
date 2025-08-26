@@ -78,7 +78,7 @@
 import { prefix } from '@/config/global';
 
 import { CONTRACT_STATUS, CONTRACT_STATUS_OPTIONS } from '@/constants';
-import { cateList, createCate } from '@/api/Device';
+import { cateList, createCate, findAllCate } from '@/api/Device';
 import CateForm from '@/pages/device/cateForm.vue';
 
 export default {
@@ -160,6 +160,7 @@ export default {
     },
     create() {
       this.visibleModelessDrag = true;
+      this.$refs.cateForm.setValue();
     },
     queryList() {
       this.dataLoading = true;
@@ -184,11 +185,11 @@ export default {
         });
     },
     handleConfirm() {
-      this.$refs.userForm.validate().then((result) => {
+      this.$refs.cateForm.validate().then((result) => {
         if (result === true) {
           // 校验通过
-          const data = this.$refs.userForm.getFormData();
-          createUser(data).then((res) => {
+          const data = this.$refs.cateForm.getFormData();
+          createCate(data).then((res) => {
             if (res.data.code && res.data.code !== 0) {
               this.$message.error(res.data.msg);
             } else {

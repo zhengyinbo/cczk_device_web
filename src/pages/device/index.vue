@@ -78,11 +78,6 @@
         :headerAffixedTop="true"
         :headerAffixProps="{ offsetTop, container: getContainer }"
       >
-        <!-- <template #status="{ row }">
-          <t-tag v-if="row.status === CONTRACT_STATUS.NORMAL" theme="success" variant="light">正常</t-tag>
-          <t-tag v-if="row.status === CONTRACT_STATUS.DISABLE" theme="danger" variant="light">禁用</t-tag>
-        </template> -->
-
         <template #op="slotProps">
           <a class="t-button-link" @click="rehandleClickOp(slotProps)">管理</a>
           <a class="t-button-link" @click="handleClickDelete(slotProps)">删除</a>
@@ -226,8 +221,11 @@ export default {
       this.deviceList(this.formData)
     },
     create() {
-      this.formData = {deviceNo: "111", deviceTypeId: "222"};
+      this.formData = {};
       this.visibleModelessDrag = true;
+      findAllCate().then((res) => {
+        this.$refs.deviceForm.setCateList(res.data);
+      });
     },
     deviceList() {
       this.dataLoading = true;

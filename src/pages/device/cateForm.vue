@@ -51,6 +51,9 @@ export default {
     getFormData() {
       return this.formData;
     },
+    setValue() {
+      this.formData = {}
+    },
   },
 };
 </script>
