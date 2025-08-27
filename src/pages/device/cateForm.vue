@@ -12,6 +12,7 @@
           <div class="form-basic-container-title">设备类型信息</div>
           <!-- 表单内容 -->
           <t-row class="row-gap">
+            <t-input v-model="formData.deviceTypeId" v-show="false" />
             <t-col :span="6">
               <t-form-item label="设备类型" name="deviceTypeName">
                 <t-input v-model="formData.deviceTypeName" :style="{ width: '322px' }" placeholder="请输入内容" />
@@ -27,7 +28,8 @@
 import { prefix } from '@/config/global';
 
 const INITIAL_DATA = {
-  deviceNo: '',
+  deviceTypeId: '',
+  deviceTypeName: '',
   remark: '',
 };
 const FORM_RULES = {
@@ -51,8 +53,8 @@ export default {
     getFormData() {
       return this.formData;
     },
-    setValue() {
-      this.formData = {}
+    setValue(value) {
+      this.formData = value;
     },
   },
 };

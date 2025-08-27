@@ -71,6 +71,19 @@
           <cate-form ref="cateForm" />
         </template>
       </t-dialog>
+
+      <t-dialog
+        :visible="updateDialog"
+        header="修改设备类型"
+        mode="modeless"
+        draggable
+        @confirm="updateHandleConfirm"
+        @cancel="updateHandleCancel"
+      >
+        <template #body>
+          <cate-form ref="cateForm" />
+        </template>
+      </t-dialog>
     </div>
   </div>
 </template>
@@ -78,7 +91,7 @@
 import { prefix } from '@/config/global';
 
 import { CONTRACT_STATUS, CONTRACT_STATUS_OPTIONS } from '@/constants';
-import { cateList, createCate, findAllCate } from '@/api/Device';
+import { cateList, createCate, findAllCate, updateCate } from '@/api/Device';
 import CateForm from '@/pages/device/cateForm.vue';
 
 export default {
@@ -131,6 +144,7 @@ export default {
       confirmVisible: false,
       deleteIdx: -1,
       visibleModelessDrag: false,
+      updateDialog: false,
     };
   },
   computed: {
@@ -160,7 +174,7 @@ export default {
     },
     create() {
       this.visibleModelessDrag = true;
-      this.$refs.cateForm.setValue();
+      this.$refs.cateForm.setValue({});
     },
     queryList() {
       this.dataLoading = true;
@@ -208,6 +222,21 @@ export default {
     handleCancel() {
       this.visibleModelessDrag = false;
     },
+    updateHandleConfirm() {
+      const data = this.$refs.cateForm.getFormData();
+      updateCate(data).then((res) => {
+        if (res.code === 0) {
+          this.$message.success("修改成功")
+          this.updateDialog = false;
+        } else {
+          this.$message.error(res.msg)
+        }
+      });
+    },
+    updateHandleCancel() {
+      this.queryList();
+      this.updateDialog = false;
+    },
     rehandlePageChange(curr, pageInfo) {
       console.log('分页变化', curr, pageInfo);
     },
@@ -218,6 +247,8 @@ export default {
     },
     rehandleClickOp({ text, row }) {
       console.log(text, row);
+      this.updateDialog = true;
+      this.$refs.cateForm.setValue(row);
     },
     handleClickDelete(row) {
       this.deleteIdx = row.rowIndex;
