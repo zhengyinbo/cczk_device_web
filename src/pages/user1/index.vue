@@ -8,31 +8,28 @@
       @submit="onSubmit"
       :style="{ marginBottom: '8px' }"
     >
-      <t-row>
-        <t-col :span="10">
-          <t-row :gutter="[16, 24]">
-            <t-col :flex="1">
-              <t-form-item label="用户名/手机号码" name="userName">
-                <t-input
-                  v-model="formData.userName"
-                  class="form-item-content"
-                  type="search"
-                  placeholder="请输入用户名/手机号码"
-                  :style="{ minWidth: '134px' }"
-                />
-              </t-form-item>
-            </t-col>
-            <t-col :flex="1">
-              <t-form-item label="状态" name="status">
-                <t-select
-                  v-model="formData.status"
-                  class="form-item-content`"
-                  :options="CONTRACT_STATUS_OPTIONS"
-                  placeholder="请选择状态"
-                />
-              </t-form-item>
-            </t-col>
-          </t-row>
+      <t-row :gutter="[8, 24]" class="row-gap">
+        <t-col :span="4">
+          <t-form-item label="用户名" name="userName">
+            <t-input
+              v-model="formData.userName"
+              class="form-item-content"
+              type="search"
+              placeholder="请输入用户名/手机号码"
+              :style="{ minWidth: '134px' }"
+            />
+          </t-form-item>
+        </t-col>
+
+        <t-col :span="4">
+          <t-form-item label="状态" name="status">
+            <t-select
+              v-model="formData.status"
+              class="form-item-content`"
+              :options="CONTRACT_STATUS_OPTIONS"
+              placeholder="请选择状态"
+            />
+          </t-form-item>
         </t-col>
 
         <t-col :span="2" class="operation-container">

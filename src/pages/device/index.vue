@@ -8,56 +8,51 @@
       @submit="onSubmit"
       :style="{ marginBottom: '8px' }"
     >
-      <t-row>
-        <t-col :span="10">
-          <t-row :gutter="[16, 24]">
-            <t-col :flex="1">
-              <t-form-item label="设备编号" name="deviceNo">
-                <t-input
-                  v-model="formData.deviceNo"
-                  class="form-item-content"
-                  type="search"
-                  placeholder="请输入设备编号"
-                  :style="{ minWidth: '134px' }"
-                />
-              </t-form-item>
-            </t-col>
-            <t-col :flex="1">
-              <t-form-item label="所属用户" name="userName">
-                <t-input
-                  v-model="formData.userName"
-                  class="form-item-content"
-                  type="search"
-                  placeholder="请输入设备编号"
-                  :style="{ minWidth: '134px' }"
-                />
-              </t-form-item>
-            </t-col>
-            <t-col :flex="1">
-              <t-form-item label="设备类型" name="deviceTypeName">
-                <t-input
-                  v-model="formData.deviceTypeName"
-                  class="form-item-content"
-                  type="search"
-                  placeholder="请输入设备编号"
-                  :style="{ minWidth: '134px' }"
-                />
-              </t-form-item>
-            </t-col>
-            <t-col :flex="1">
-              <t-form-item label="状态" name="status">
-                <t-select
-                  v-model="formData.status"
-                  class="form-item-content`"
-                  :options="CONTRACT_STATUS_OPTIONS"
-                  placeholder="请选择状态"
-                />
-              </t-form-item>
-            </t-col>
-          </t-row>
+      <t-row :gutter="[8, 24]" class="row-gap">
+        <t-col :span="4">
+          <t-form-item label="设备编号" name="deviceNo">
+            <t-input
+              v-model="formData.deviceNo"
+              class="form-item-content"
+              type="search"
+              placeholder=""
+              :style="{ minWidth: '220px' }"
+            />
+          </t-form-item>
         </t-col>
-
-        <t-col :span="2" class="operation-container">
+        <t-col :span="4">
+          <t-form-item label="所属用户" name="userName">
+            <t-input
+              v-model="formData.userName"
+              class="form-item-content"
+              type="search"
+              placeholder=""
+              :style="{ minWidth: '220px' }"
+            />
+          </t-form-item>
+        </t-col>
+        <t-col :span="4">
+          <t-form-item label="设备类型" name="deviceTypeName">
+            <t-input
+              v-model="formData.deviceTypeName"
+              class="form-item-content"
+              type="search"
+              placeholder=""
+              :style="{ minWidth: '220px' }"
+            />
+          </t-form-item>
+        </t-col>
+        <t-col :span="4">
+          <t-form-item label="状态" name="status">
+            <t-select
+              v-model="formData.status"
+              class="form-item-content`"
+              :options="CONTRACT_STATUS_OPTIONS"
+              placeholder="请选择状态"
+            />
+          </t-form-item>
+        </t-col>
+        <t-col :span="4" class="operation-container">
           <t-button theme="primary" :style="{ marginLeft: '8px' }" @click="create"> 新增 </t-button>
           <t-button theme="success" type="submit" :style="{ marginLeft: '8px' }"> 查询 </t-button>
           <t-button type="reset" variant="base" theme="default"> 重置 </t-button>

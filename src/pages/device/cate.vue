@@ -9,9 +9,9 @@
       :style="{ marginBottom: '8px' }"
     >
       <t-row>
-        <t-col :span="10">
+        <t-col :span="4">
           <t-row :gutter="[16, 24]">
-            <t-col :flex="1">
+            <t-col :flex="4">
               <t-form-item label="设备类型" name="deviceTypeName">
                 <t-input
                   v-model="formData.deviceTypeName"
@@ -64,6 +64,7 @@
         header="新增设备类型"
         mode="modeless"
         draggable
+        closeBtn
         @confirm="handleConfirm"
         @cancel="handleCancel"
       >
@@ -77,6 +78,7 @@
         header="修改设备类型"
         mode="modeless"
         draggable
+        closeBtn
         @confirm="updateHandleConfirm"
         @cancel="updateHandleCancel"
       >
@@ -235,6 +237,10 @@ export default {
     },
     updateHandleCancel() {
       this.queryList();
+      this.updateDialog = false;
+    },
+    closeBtn(){
+      this.visibleModelessDrag = false;
       this.updateDialog = false;
     },
     rehandlePageChange(curr, pageInfo) {
