@@ -78,12 +78,8 @@
   </div>
 </template>
 <script>
-import { prefix } from '@/config/global';
-import Trend from '@/components/trend/index.vue';
 
 import {
-  CONTRACT_STATUS,
-  CONTRACT_STATUS_OPTIONS
 } from '@/constants';
 
 </script>

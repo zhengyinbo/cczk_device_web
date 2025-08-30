@@ -45,7 +45,7 @@ export default [
   //         {
   //           path: 'third',
   //           name: 'NestMenu',
-  //           component: () => import('@/pages/nest-menu/index.vue'),
+  //           component: () => import('@/pages/nest-menu/device.vue'),
   //           meta: { title: '三级菜单' },
   //         },
   //       ],

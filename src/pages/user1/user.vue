@@ -33,9 +33,9 @@
         </t-col>
 
         <t-col :span="2" class="operation-container">
-          <t-button theme="primary" :style="{ marginLeft: '8px' }" @click="create"> 新增 </t-button>
           <t-button theme="success" type="submit" :style="{ marginLeft: '8px' }"> 查询 </t-button>
           <t-button type="reset" variant="base" theme="default"> 重置 </t-button>
+          <t-button theme="primary" :style="{ marginLeft: '8px' }" @click="create"> 新增 </t-button>
         </t-col>
       </t-row>
     </t-form>
@@ -60,11 +60,12 @@
 
         <template #op="slotProps">
           <a class="t-button-link" @click="rehandleClickOp(slotProps)">管理</a>
-          <a class="t-button-link" @click="handleClickDelete(slotProps)">删除</a>
+          <a v-if="slotProps.row.status === CONTRACT_STATUS.NORMAL" class="t-button-link" @click="handleClickDelete(slotProps, '禁用后，用户将无法登陆')">禁用</a>
+          <a v-if="slotProps.row.status === CONTRACT_STATUS.DISABLE" class="t-button-link" @click="handleClickDelete(slotProps, '启用后，用户可正常登陆')">启用</a>
         </template>
       </t-table>
       <t-dialog
-        header="确认删除当前所选合同？"
+        header="确认修改当前所选用户状态？"
         :body="confirmBody"
         :visible.sync="confirmVisible"
         @confirm="onConfirmDelete"
@@ -83,6 +84,19 @@
           <user-form ref="userForm" />
         </template>
       </t-dialog>
+      <t-dialog
+        :visible="updateDialog"
+        header="修改用户信息"
+        mode="modeless"
+        draggable
+        closeBtn
+        @confirm="updateHandleConfirm"
+        @cancel="updateHandleCancel"
+      >
+        <template #body>
+          <user-form ref="userForm" />
+        </template>
+      </t-dialog>
     </div>
   </div>
 </template>
@@ -90,7 +104,7 @@
 import { prefix } from '@/config/global';
 
 import { CONTRACT_STATUS, CONTRACT_STATUS_OPTIONS } from '@/constants';
-import { queryList, createUser } from '@/api/Users';
+import { queryList, createUser, updateUser , bandUser} from '@/api/Users';
 import UserForm from '@/pages/user1/userForm.vue';
 
 export default {
@@ -148,20 +162,18 @@ export default {
       pagination: {
         current: 1,
         pageSize: 10,
-        total: 0
+        total: 0,
       },
       confirmVisible: false,
       deleteIdx: -1,
+      msg: -1,
       visibleModelessDrag: false,
+      updateDialog: false,
     };
   },
   computed: {
     confirmBody() {
-      if (this.deleteIdx > -1) {
-        const { name } = this.data?.[this.deleteIdx];
-        return `删除后，${name}的所有合同信息将被清空，且无法恢复`;
-      }
-      return '';
+      return this.msg;
     },
     offsetTop() {
       return this.$store.state.setting.isUseTabsRouter ? 48 : 0;
@@ -178,7 +190,7 @@ export default {
       console.log(data);
     },
     onSubmit() {
-      this.queryList(this.formData)
+      this.queryList(this.formData);
     },
     create() {
       this.visibleModelessDrag = true;
@@ -196,12 +208,14 @@ export default {
             this.data = res.data;
             this.pagination = {
               ...this.pagination,
-              total: res.count
+              total: res.count,
             };
           }
-        }).catch((e) => {
+        })
+        .catch((e) => {
           console.log(e);
-        }).finally(() => {
+        })
+        .finally(() => {
           this.dataLoading = false;
         });
     },
@@ -211,8 +225,8 @@ export default {
           // 校验通过
           const data = this.$refs.userForm.getFormData();
           createUser(data).then((res) => {
-            if (res.data.code && res.data.code !== 0) {
-              this.$message.error(res.data.msg);
+            if (res.code && res.code !== 0) {
+              this.$message.error(res.msg);
             } else {
               this.$message.success(res.data);
               this.visibleModelessDrag = false;
@@ -222,12 +236,27 @@ export default {
           });
         } else {
           // 校验失败
-          console.log("校验失败:", result);
+          console.log('校验失败:', result);
         }
       });
     },
     handleCancel() {
       this.visibleModelessDrag = false;
+    },
+    updateHandleConfirm() {
+      const data = this.$refs.userForm.getFormData();
+      updateUser(data).then((res) => {
+        if (res.code === 0) {
+          this.$message.success("修改成功")
+          this.updateDialog = false;
+        } else {
+          this.$message.error(res.msg)
+        }
+      });
+    },
+    updateHandleCancel() {
+      this.queryList();
+      this.updateDialog = false;
     },
     rehandlePageChange(curr, pageInfo) {
       console.log('分页变化', curr, pageInfo);
@@ -237,20 +266,23 @@ export default {
       this.pagination = { ...changeParams.pagination };
       this.queryList();
     },
-    rehandleClickOp({ text, row }) {
-      console.log(text, row);
+    rehandleClickOp(row) {
+      this.updateDialog = true;
+      this.$refs.userForm.setValue(row);
     },
-    handleClickDelete(row) {
-      this.deleteIdx = row.rowIndex;
+    handleClickDelete(row, msg) {
+      this.deleteIdx = row.row.userId;
+      this.msg = msg;
       this.confirmVisible = true;
     },
     onConfirmDelete() {
       // 真实业务请发起请求
-      this.data.splice(this.deleteIdx, 1);
-      this.pagination.total = this.data.length;
-      this.confirmVisible = false;
-      this.$message.success('删除成功');
-      this.resetIdx();
+      const data = {userId: this.deleteIdx};
+      bandUser(data).then((res) => {
+        this.$message.success(res.data);
+        this.queryList();
+        this.confirmVisible = false;
+      })
     },
     onCancel() {
       this.resetIdx();

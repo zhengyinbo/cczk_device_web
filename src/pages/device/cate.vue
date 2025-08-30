@@ -26,9 +26,9 @@
         </t-col>
 
         <t-col :span="2" class="operation-container">
-          <t-button theme="primary" :style="{ marginLeft: '8px' }" @click="create"> 新增 </t-button>
           <t-button theme="success" type="submit" :style="{ marginLeft: '8px' }"> 查询 </t-button>
           <t-button type="reset" variant="base" theme="default"> 重置 </t-button>
+          <t-button theme="primary" :style="{ marginLeft: '8px' }" @click="create"> 新增 </t-button>
         </t-col>
       </t-row>
     </t-form>
@@ -63,8 +63,7 @@
         :visible="visibleModelessDrag"
         header="新增设备类型"
         mode="modeless"
-        draggable
-        closeBtn
+        closeBtn=""
         @confirm="handleConfirm"
         @cancel="handleCancel"
       >
@@ -72,7 +71,6 @@
           <cate-form ref="cateForm" />
         </template>
       </t-dialog>
-
       <t-dialog
         :visible="updateDialog"
         header="修改设备类型"
@@ -93,8 +91,9 @@
 import { prefix } from '@/config/global';
 
 import { CONTRACT_STATUS, CONTRACT_STATUS_OPTIONS } from '@/constants';
-import { cateList, createCate, findAllCate, updateCate } from '@/api/Device';
+import { cateList, createCate, deleteCate, findAllCate, updateCate } from '@/api/Device';
 import CateForm from '@/pages/device/cateForm.vue';
+import { bandUser } from '@/api/Users';
 
 export default {
   name: 'list-table',
@@ -105,7 +104,7 @@ export default {
       CONTRACT_STATUS_OPTIONS,
       prefix,
       formData: {
-        deviceTypeName: ''
+        deviceTypeName: '',
       },
       data: [],
       dataLoading: false,
@@ -141,7 +140,7 @@ export default {
       pagination: {
         current: 1,
         pageSize: 10,
-        total: 0
+        total: 0,
       },
       confirmVisible: false,
       deleteIdx: -1,
@@ -151,11 +150,7 @@ export default {
   },
   computed: {
     confirmBody() {
-      if (this.deleteIdx > -1) {
-        const { name } = this.data?.[this.deleteIdx];
-        return `删除后，${name}的所有合同信息将被清空，且无法恢复`;
-      }
-      return '';
+      return `删除后，且无法恢复`;
     },
     offsetTop() {
       return this.$store.state.setting.isUseTabsRouter ? 48 : 0;
@@ -172,7 +167,7 @@ export default {
       console.log(data);
     },
     onSubmit() {
-      this.queryList(this.formData)
+      this.queryList(this.formData);
     },
     create() {
       this.visibleModelessDrag = true;
@@ -191,12 +186,14 @@ export default {
             this.data = res.data;
             this.pagination = {
               ...this.pagination,
-              total: res.count
+              total: res.count,
             };
           }
-        }).catch((e) => {
+        })
+        .catch((e) => {
           console.log(e);
-        }).finally(() => {
+        })
+        .finally(() => {
           this.dataLoading = false;
         });
     },
@@ -217,7 +214,7 @@ export default {
           });
         } else {
           // 校验失败
-          console.log("校验失败:", result);
+          console.log('校验失败:', result);
         }
       });
     },
@@ -228,19 +225,15 @@ export default {
       const data = this.$refs.cateForm.getFormData();
       updateCate(data).then((res) => {
         if (res.code === 0) {
-          this.$message.success("修改成功")
+          this.$message.success('修改成功');
           this.updateDialog = false;
         } else {
-          this.$message.error(res.msg)
+          this.$message.error(res.msg);
         }
       });
     },
     updateHandleCancel() {
       this.queryList();
-      this.updateDialog = false;
-    },
-    closeBtn(){
-      this.visibleModelessDrag = false;
       this.updateDialog = false;
     },
     rehandlePageChange(curr, pageInfo) {
@@ -257,16 +250,18 @@ export default {
       this.$refs.cateForm.setValue(row);
     },
     handleClickDelete(row) {
-      this.deleteIdx = row.rowIndex;
+      this.deleteIdx = row.row.deviceTypeId;
       this.confirmVisible = true;
     },
     onConfirmDelete() {
       // 真实业务请发起请求
-      this.data.splice(this.deleteIdx, 1);
-      this.pagination.total = this.data.length;
-      this.confirmVisible = false;
-      this.$message.success('删除成功');
-      this.resetIdx();
+      const data = { deviceTypeId: this.deleteIdx };
+      deleteCate(data).then((res) => {
+        console.log(res);
+        this.$message.success(res.data);
+        this.queryList();
+        this.confirmVisible = false;
+      });
     },
     onCancel() {
       this.resetIdx();

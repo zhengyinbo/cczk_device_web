@@ -41,7 +41,7 @@
             <t-row class="row-gap">
             <t-col :span="6">
               <t-form-item label="mac地址" name="macAdd">
-                <t-input v-model="formData.userName" :style="{ width: '322px' }" placeholder="请输入内容" />
+                <t-input v-model="formData.macAdd" :style="{ width: '322px' }" placeholder="请输入内容" />
               </t-form-item>
             </t-col>
           </t-row>
@@ -57,10 +57,6 @@
 <script>
 import { prefix } from '@/config/global';
 
-const INITIAL_DATA = {
-  deviceTypeId: '',
-  deviceNo: '',
-};
 const FORM_RULES = {
   deviceTypeId: [{ required: true, message: '请选择设备类型', type: 'error' }],
   deviceNo: [{ required: true, message: '请输入设备编号', type: 'error' }]
@@ -68,17 +64,16 @@ const FORM_RULES = {
 
 export default {
   name: 'DeviceForm',
-  props: {
-    value: {
-      type: Object,
-      required: true
-    }
-  },
   data() {
     return {
       prefix,
       stepSuccess: true,
-      formData: { ...INITIAL_DATA },
+      formData: {
+        deviceTypeId: '',
+        deviceNo: '',
+        macAdd: '',
+        remark: '',
+      },
       FORM_RULES,
       typeOptions: [{}],
     };
@@ -96,9 +91,9 @@ export default {
     reset() {
       this.formData = {};
     },
-    setCateList(res) {
+    setValue(res, row) {
+      this.formData = row
       this.typeOptions = res
-      console.log(this.typeOptions);
     }
   },
 };

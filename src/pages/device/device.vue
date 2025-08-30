@@ -21,25 +21,33 @@
           </t-form-item>
         </t-col>
         <t-col :span="4">
-          <t-form-item label="所属用户" name="userName">
-            <t-input
-              v-model="formData.userName"
-              class="form-item-content"
-              type="search"
-              placeholder=""
-              :style="{ minWidth: '220px' }"
-            />
+          <t-form-item label="所属用户" name="userId">
+            <t-select
+              v-model="formData.userId"
+              :style="{ width: '322px' }"
+              placeholder="请选择用户"
+              class="demo-select-base"
+            >
+              <t-option v-for="(item, index) in userOptions" :key="index" :value="item.userId"
+                        :label="item.userName">
+                {{ item.userName }}
+              </t-option>
+            </t-select>
           </t-form-item>
         </t-col>
         <t-col :span="4">
-          <t-form-item label="设备类型" name="deviceTypeName">
-            <t-input
-              v-model="formData.deviceTypeName"
-              class="form-item-content"
-              type="search"
-              placeholder=""
-              :style="{ minWidth: '220px' }"
-            />
+          <t-form-item label="设备类型" name="deviceTypeId">
+            <t-select
+              v-model="formData.deviceTypeId"
+              :style="{ width: '322px' }"
+              placeholder="请选择类型"
+              class="demo-select-base"
+            >
+              <t-option v-for="(item, index) in typeOptions" :key="index" :value="item.deviceTypeId"
+                        :label="item.deviceTypeName">
+                {{ item.deviceTypeName }}
+              </t-option>
+            </t-select>
           </t-form-item>
         </t-col>
         <t-col :span="4">
@@ -53,9 +61,9 @@
           </t-form-item>
         </t-col>
         <t-col :span="4" class="operation-container">
-          <t-button theme="primary" :style="{ marginLeft: '8px' }" @click="create"> 新增 </t-button>
           <t-button theme="success" type="submit" :style="{ marginLeft: '8px' }"> 查询 </t-button>
           <t-button type="reset" variant="base" theme="default"> 重置 </t-button>
+          <t-button theme="primary" :style="{ marginLeft: '8px' }" @click="create"> 新增 </t-button>
         </t-col>
       </t-row>
     </t-form>
@@ -90,12 +98,24 @@
         :visible="visibleModelessDrag"
         header="新增设备"
         mode="modeless"
-        draggable
+        closeBtn=""
         @confirm="handleConfirm"
         @cancel="handleCancel"
       >
         <template #body>
           <device-form ref="deviceForm" v-model="formData" />
+        </template>
+      </t-dialog>
+      <t-dialog
+        :visible="updateDialog"
+        header="修改设备"
+        mode="modeless"
+        closeBtn=""
+        @confirm="updateHandleConfirm"
+        @cancel="updateHandleCancel"
+      >
+        <template #body>
+          <device-form ref="deviceForm" />
         </template>
       </t-dialog>
     </div>
@@ -105,7 +125,8 @@
 import { prefix } from '@/config/global';
 
 import { CONTRACT_STATUS, CONTRACT_STATUS_OPTIONS } from '@/constants';
-import { deviceList, createDevice, updateDevice, deleteDevice, cateList, findAllCate } from '@/api/Device';
+import { deviceList, createDevice, updateDevice, deleteDevice, cateList, findAllCate, updateCate } from '@/api/Device';
+import { findAll } from '@/api/Users'
 import DeviceForm from '@/pages/device/deviceForm.vue';
 
 export default {
@@ -119,8 +140,8 @@ export default {
       formData: {
         deviceNo: '',
         deviceTypeId: '',
-        macAdd: "",
-        remark: ""
+        macAdd: '',
+        remark: '',
       },
       data: [],
       dataLoading: false,
@@ -183,27 +204,32 @@ export default {
       pagination: {
         current: 1,
         pageSize: 10,
-        total: 0
+        total: 0,
       },
       confirmVisible: false,
       deleteIdx: -1,
       visibleModelessDrag: false,
+      updateDialog: false,
+      userOptions: [],
+      typeOptions: [],
     };
   },
   computed: {
     confirmBody() {
-      if (this.deleteIdx > -1) {
-        const { name } = this.data?.[this.deleteIdx];
-        return `删除后，${name}的所有合同信息将被清空，且无法恢复`;
-      }
-      return '';
+      return `删除后，无法恢复`;
     },
     offsetTop() {
       return this.$store.state.setting.isUseTabsRouter ? 48 : 0;
     },
   },
   mounted() {
-    this.deviceList();
+    this.queryList();
+    findAllCate().then((res) => {
+      this.typeOptions = res.data;
+    });
+    findAll().then((res) => {
+      this.userOptions = res.data;
+    });
   },
   methods: {
     getContainer() {
@@ -213,16 +239,15 @@ export default {
       console.log(data);
     },
     onSubmit() {
-      this.deviceList(this.formData)
+      this.queryList(this.formData);
     },
     create() {
-      this.formData = {};
-      this.visibleModelessDrag = true;
       findAllCate().then((res) => {
-        this.$refs.deviceForm.setCateList(res.data);
+        this.$refs.deviceForm.setValue(res.data, {});
+        this.visibleModelessDrag = true;
       });
     },
-    deviceList() {
+    queryList() {
       this.dataLoading = true;
       const params = {
         page: this.pagination.current,
@@ -235,12 +260,14 @@ export default {
             this.data = res.data;
             this.pagination = {
               ...this.pagination,
-              total: res.count
+              total: res.count,
             };
           }
-        }).catch((e) => {
+        })
+        .catch((e) => {
           console.log(e);
-        }).finally(() => {
+        })
+        .finally(() => {
           this.dataLoading = false;
         });
     },
@@ -250,18 +277,18 @@ export default {
           // 校验通过
           const data = this.$refs.deviceForm.getFormData();
           createDevice(data).then((res) => {
-            if (res.data.code && res.data.code !== 0) {
-              this.$message.error(res.data.msg);
+            if (res.code && res.code !== 0) {
+              this.$message.error(res.msg);
             } else {
               this.$message.success(res.data);
               this.visibleModelessDrag = false;
               // 刷新list
-              this.deviceList();
+              this.queryList();
             }
           });
         } else {
           // 校验失败
-          console.log("校验失败:", result);
+          console.log('校验失败:', result);
         }
       });
     },
@@ -269,10 +296,21 @@ export default {
       this.visibleModelessDrag = false;
       this.$refs.deviceForm.reset();
     },
-    cateList() {
-      findAllCate.then((res) => {
-        this.cateList = res.data
+    updateHandleConfirm() {
+      const data = this.$refs.deviceForm.getFormData();
+      updateDevice(data).then((res) => {
+        if (res.code === 0) {
+          this.$message.success('修改成功');
+          this.queryList();
+          this.updateDialog = false;
+        } else {
+          this.$message.error(res.msg);
+        }
       });
+    },
+    updateHandleCancel() {
+      this.queryList();
+      this.updateDialog = false;
     },
     rehandlePageChange(curr, pageInfo) {
       console.log('分页变化', curr, pageInfo);
@@ -280,10 +318,13 @@ export default {
     rehandleChange(changeParams, triggerAndData) {
       console.log('统一Change', changeParams, triggerAndData);
       this.pagination = { ...changeParams.pagination };
-      this.deviceList();
+      this.queryList();
     },
-    rehandleClickOp({ text, row }) {
-      console.log(text, row);
+    rehandleClickOp( row ) {
+      findAllCate().then((res) => {
+        this.$refs.deviceForm.setValue(res.data, row.row);
+      });
+      this.updateDialog = true;
     },
     handleClickDelete(row) {
       this.deleteIdx = row.rowIndex;

@@ -27,11 +27,6 @@
 <script>
 import { prefix } from '@/config/global';
 
-const INITIAL_DATA = {
-  deviceTypeId: '',
-  deviceTypeName: '',
-  remark: '',
-};
 const FORM_RULES = {
   deviceTypeName: [{ required: true, message: '请填写设备类型', type: 'error' }]
 };
@@ -42,7 +37,11 @@ export default {
     return {
       prefix,
       stepSuccess: true,
-      formData: { ...INITIAL_DATA },
+      formData: {
+        deviceTypeId: '',
+        deviceTypeName: '',
+        remark: '',
+      },
       FORM_RULES
     };
   },

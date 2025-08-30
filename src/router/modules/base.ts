@@ -40,7 +40,7 @@ export default [
       {
         path: 'index',
         name: 'DashboardBase',
-        component: () => import('@/pages/user1/index.vue'),
+        component: () => import('@/pages/user1/user.vue'),
         meta: { title: '用户管理'},
       },
       {
@@ -70,7 +70,7 @@ export default [
       {
         path: 'detail',
         name: 'Device',
-        component: () => import('@/pages/device/index.vue'),
+        component: () => import('@/pages/device/device.vue'),
         meta: { title: '设备管理' },
       },
     ],
