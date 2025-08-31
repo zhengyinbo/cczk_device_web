@@ -28,8 +28,7 @@
               placeholder="请选择用户"
               class="demo-select-base"
             >
-              <t-option v-for="(item, index) in userOptions" :key="index" :value="item.userId"
-                        :label="item.userName">
+              <t-option v-for="(item, index) in userOptions" :key="index" :value="item.userId" :label="item.userName">
                 {{ item.userName }}
               </t-option>
             </t-select>
@@ -43,8 +42,12 @@
               placeholder="请选择类型"
               class="demo-select-base"
             >
-              <t-option v-for="(item, index) in typeOptions" :key="index" :value="item.deviceTypeId"
-                        :label="item.deviceTypeName">
+              <t-option
+                v-for="(item, index) in typeOptions"
+                :key="index"
+                :value="item.deviceTypeId"
+                :label="item.deviceTypeName"
+              >
                 {{ item.deviceTypeName }}
               </t-option>
             </t-select>
@@ -83,6 +86,8 @@
       >
         <template #op="slotProps">
           <a class="t-button-link" @click="rehandleClickOp(slotProps)">管理</a>
+          <a class="t-button-link" @click="bandDevice(slotProps)">绑定用户</a>
+          <a class="t-button-link" @click="unBandDevice(slotProps)">解绑用户</a>
           <a class="t-button-link" @click="handleClickDelete(slotProps)">删除</a>
         </template>
       </t-table>
@@ -118,6 +123,26 @@
           <device-form ref="deviceForm" />
         </template>
       </t-dialog>
+      <t-dialog
+        header="确认解绑当前设备？"
+        :body="confirmBody"
+        :visible.sync="unBandDeviceVisible"
+        @confirm="unBandDeviceConfirm"
+        :onCancel="unBandDeviceCancel"
+      >
+      </t-dialog>
+      <t-dialog
+        :visible="bandDeviceVisible"
+        header="绑定用户"
+        mode="modeless"
+        closeBtn=""
+        @confirm="bandDeviceConfirm"
+        @cancel="bandDeviceCancel"
+      >
+        <template #body>
+          <band-device-form ref="bandDeviceForm" />
+        </template>
+      </t-dialog>
     </div>
   </div>
 </template>
@@ -125,13 +150,22 @@
 import { prefix } from '@/config/global';
 
 import { CONTRACT_STATUS, CONTRACT_STATUS_OPTIONS } from '@/constants';
-import { deviceList, createDevice, updateDevice, deleteDevice, cateList, findAllCate, updateCate } from '@/api/Device';
-import { findAll } from '@/api/Users'
+import {
+  deviceList,
+  createDevice,
+  updateDevice,
+  deleteDevice,
+  findAllCate,
+  bandDevice,
+  unBandDevice,
+} from '@/api/Device';
+import { findAll } from '@/api/Users';
 import DeviceForm from '@/pages/device/deviceForm.vue';
+import BandDeviceForm from '@/pages/device/bandDevice.vue';
 
 export default {
   name: 'list-table',
-  components: { DeviceForm },
+  components: { BandDeviceForm, DeviceForm },
   data() {
     return {
       CONTRACT_STATUS,
@@ -210,13 +244,16 @@ export default {
       deleteIdx: -1,
       visibleModelessDrag: false,
       updateDialog: false,
+      bandDeviceVisible: false,
+      unBandDeviceVisible: false,
       userOptions: [],
       typeOptions: [],
+      msg: '',
     };
   },
   computed: {
     confirmBody() {
-      return `删除后，无法恢复`;
+      return this.msg;
     },
     offsetTop() {
       return this.$store.state.setting.isUseTabsRouter ? 48 : 0;
@@ -320,23 +357,77 @@ export default {
       this.pagination = { ...changeParams.pagination };
       this.queryList();
     },
-    rehandleClickOp( row ) {
+    rehandleClickOp(row) {
       findAllCate().then((res) => {
         this.$refs.deviceForm.setValue(res.data, row.row);
       });
       this.updateDialog = true;
     },
     handleClickDelete(row) {
-      this.deleteIdx = row.rowIndex;
+      this.msg = '删除后，无法恢复';
+      this.deleteIdx = row.row.deviceId;
       this.confirmVisible = true;
     },
     onConfirmDelete() {
       // 真实业务请发起请求
-      this.data.splice(this.deleteIdx, 1);
-      this.pagination.total = this.data.length;
-      this.confirmVisible = false;
-      this.$message.success('删除成功');
-      this.resetIdx();
+      const data = { deviceId: this.deleteIdx };
+      deleteDevice(data).then((res) => {
+        if (res.code === 0) {
+          this.$message.success(res.data);
+          this.queryList();
+          this.confirmVisible = false;
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
+    },
+    unBandDevice(row) {
+      this.msg = '是否解绑？';
+      this.deleteIdx = row.row.deviceId;
+      this.unBandDeviceVisible = true;
+    },
+    unBandDeviceConfirm() {
+      // 真实业务请发起请求
+      const data = { deviceId: this.deleteIdx };
+      unBandDevice(data).then((res) => {
+        console.log(res);
+        if (res.code === 0) {
+          this.$message.success(res.data);
+          this.queryList();
+          this.unBandDeviceVisible = false;
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
+    },
+    unBandDeviceCancel() {
+      this.unBandDeviceVisible = false;
+    },
+    bandDevice(row) {
+      const data = {
+        user: this.userOptions,
+        userId: row.row.userId,
+        deviceId: row.row.deviceId,
+      }
+      this.$refs.bandDeviceForm.setValue(data);
+      this.bandDeviceVisible = true;
+    },
+    bandDeviceConfirm() {
+      // 真实业务请发起请求
+      const data = this.$refs.bandDeviceForm.getFormData();
+      bandDevice(data).then((res) => {
+        console.log(res);
+        if (res.code === 0) {
+          this.$message.success(res.data);
+          this.queryList();
+          this.bandDeviceVisible = false;
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
+    },
+    bandDeviceCancel() {
+      this.bandDeviceVisible = false;
     },
     onCancel() {
       this.resetIdx();

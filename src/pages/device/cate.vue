@@ -258,9 +258,13 @@ export default {
       const data = { deviceTypeId: this.deleteIdx };
       deleteCate(data).then((res) => {
         console.log(res);
-        this.$message.success(res.data);
-        this.queryList();
-        this.confirmVisible = false;
+        if (res.code === 0) {
+          this.$message.success(res.data);
+          this.queryList();
+          this.confirmVisible = false;
+        } else {
+          this.$message.error(res.msg);
+        }
       });
     },
     onCancel() {

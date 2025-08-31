@@ -5,6 +5,8 @@ const Api = {
   createDevice : '/device/create',
   updateDevice : '/device/update',
   deleteDevice : '/device/delete',
+  bandDevice : '/device/band',
+  unBandDevice : '/device/unBand',
   cateList: 'deviceType/list',
   createCate: 'deviceType/create',
   updateCate: 'deviceType/update',
@@ -26,6 +28,14 @@ export function updateDevice(params) {
 
 export function deleteDevice(params) {
   return request.post(Api.deleteDevice, params)
+}
+
+export function unBandDevice(params) {
+  return request.post(Api.unBandDevice, params)
+}
+
+export function bandDevice(params) {
+  return request.post(Api.bandDevice, params)
 }
 
 export function findAllCate() {
