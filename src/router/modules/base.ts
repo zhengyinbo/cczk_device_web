@@ -30,7 +30,7 @@ export default [
     path: '/user1',
     component: Layout,
     redirect: '/user1/index',
-    name: 'user1',
+    name: 'user',
     meta: {
       title: '用户管理',
       icon: 'user-1',
@@ -39,39 +39,9 @@ export default [
     children: [
       {
         path: 'index',
-        name: 'DashboardBase',
+        name: 'User',
         component: () => import('@/pages/user1/user.vue'),
         meta: { title: '用户管理'},
-      },
-      {
-        path: 'detail',
-        name: 'DashboardDetail',
-        component: () => import('@/pages/dashboard/detail/index.vue'),
-        meta: { title: '统计报表' },
-      },
-    ],
-  },
-  {
-    path: '/device',
-    component: Layout,
-    redirect: '/device/index',
-    name: 'device',
-    meta: {
-      title: '设备管理',
-      icon: 'widget',
-    },
-    children: [
-      {
-        path: 'index',
-        name: 'DeviceCate',
-        component: () => import('@/pages/device/cate.vue'),
-        meta: { title: '设备类型管理'},
-      },
-      {
-        path: 'detail',
-        name: 'Device',
-        component: () => import('@/pages/device/device.vue'),
-        meta: { title: '设备管理' },
       },
     ],
   },
@@ -94,4 +64,43 @@ export default [
       }
     ],
   },
+  {
+    path: '/deviceCate',
+    component: Layout,
+    redirect: '/deviceCate/index',
+    name: 'deviceCate',
+    meta: {
+      title: '设备类型管理',
+      icon: 'widget',
+      single: true
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'DeviceCate',
+        component: () => import('@/pages/device/cate.vue'),
+        meta: { title: '设备类型管理'},
+      },
+    ],
+  },
+  {
+    path: '/device',
+    component: Layout,
+    redirect: '/device/index',
+    name: 'device',
+    meta: {
+      title: '设备管理',
+      icon: 'widget',
+      single: true
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'Device',
+        component: () => import('@/pages/device/device.vue'),
+        meta: { title: '设备管理' },
+      },
+    ],
+  },
+
 ];

@@ -166,7 +166,7 @@ export default {
       },
       confirmVisible: false,
       deleteIdx: -1,
-      msg: -1,
+      msg: '',
       visibleModelessDrag: false,
       updateDialog: false,
     };
