@@ -1,6 +1,7 @@
 import axios from 'axios';
 import store from '@/store'
-import { consoleLog } from 'echarts/types/src/util/log';
+import router from '@/router'
+import { Message } from 'tdesign-vue'
 import proxy from '../config/host';
 
 const env = import.meta.env.MODE || 'development';
@@ -45,7 +46,7 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
-    // console.log(response)
+    console.log(response);
     if (response.status === 200) {
       const { data } = response;
       // if (data.code === CODE.REQUEST_SUCCESS) {
@@ -56,6 +57,18 @@ instance.interceptors.response.use(
     }
   },
   (err) => {
+    if (err.response.data.code && err.response.data.code === 1001) {
+      // 未登录，清空本地缓存
+      localStorage.removeItem('token')
+
+      // 跳转到登录页
+      router.push({ path: '/login' })
+
+      // 也可以提示一下
+      Message.error('请重新登录')
+
+      return Promise.reject(new Error('未登录'))
+    }
     const { config } = err;
 
     if (!config || !config.retry) return Promise.reject(err);
