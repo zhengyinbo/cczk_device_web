@@ -9,28 +9,28 @@
           <t-button theme="default" shape="square" variant="text" @click="changeCollapsed">
             <view-list-icon class="collapsed-icon" />
           </t-button>
-<!--          <search :layout="layout" />-->
+          <!--          <search :layout="layout" />-->
         </div>
       </template>
       <menu-content v-show="layout !== 'side'" class="header-menu" :navData="menu" />
       <template #operations>
         <div class="operations-container">
           <!-- 搜索框 -->
-<!--          <search v-if="layout !== 'side'" :layout="layout" />-->
+          <!--          <search v-if="layout !== 'side'" :layout="layout" />-->
 
           <!-- 全局通知 -->
-<!--          <notice />-->
+          <!--          <notice />-->
 
-<!--          <t-tooltip placement="bottom" content="代码仓库">-->
-<!--            <t-button theme="default" shape="square" variant="text" @click="navToGitHub">-->
-<!--              <logo-github-icon />-->
-<!--            </t-button>-->
-<!--          </t-tooltip>-->
-<!--          <t-tooltip placement="bottom" content="帮助文档">-->
-<!--            <t-button theme="default" shape="square" variant="text" @click="navToHelper">-->
-<!--              <help-circle-icon />-->
-<!--            </t-button>-->
-<!--          </t-tooltip>-->
+          <!--          <t-tooltip placement="bottom" content="代码仓库">-->
+          <!--            <t-button theme="default" shape="square" variant="text" @click="navToGitHub">-->
+          <!--              <logo-github-icon />-->
+          <!--            </t-button>-->
+          <!--          </t-tooltip>-->
+          <!--          <t-tooltip placement="bottom" content="帮助文档">-->
+          <!--            <t-button theme="default" shape="square" variant="text" @click="navToHelper">-->
+          <!--              <help-circle-icon />-->
+          <!--            </t-button>-->
+          <!--          </t-tooltip>-->
           <t-dropdown :min-column-width="125" trigger="click">
             <template #dropdown>
               <t-dropdown-menu>
@@ -46,7 +46,7 @@
               <template #icon>
                 <user-circle-icon class="header-user-avatar" />
               </template>
-              <div class="header-user-account">Tencent</div>
+              <div class="header-user-account">{{ localUser }}</div>
               <template #suffix>
                 <chevron-down-icon />
               </template>
@@ -126,6 +126,7 @@ export default Vue.extend({
       prefix,
       visibleNotice: false,
       isSearchFocus: false,
+      localUser: '',
     };
   },
   computed: {
@@ -155,6 +156,10 @@ export default Vue.extend({
         },
       ];
     },
+  },
+  created() {
+    console.log(this.$store.getters['user/role'].name);
+    this.localUser = this.$store.getters['user/role'].name;
   },
   methods: {
     toggleSettingPanel() {

@@ -48,7 +48,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { UserIcon, LockOnIcon, BrowseOffIcon, BrowseIcon } from 'tdesign-icons-vue';
-import { userLogin } from '@/api/login';
+import { userLogin , getRole } from '@/api/login';
 
 const INITIAL_DATA = {
   userName: 'admin',
@@ -95,8 +95,12 @@ export default Vue.extend({
             // 存储token
             this.$store.dispatch('user/setToken', res.data);
             // this.$store.dispatch('user/login', this.formData);
-            this.$message.success('登录成功');
-            this.$router.replace('/').catch(() => '');
+            getRole().then((r) => {
+              this.$store.dispatch('user/setRole', r.data);
+              this.$message.success('登录成功');
+              this.$router.replace('/').catch(() => '');
+            })
+
           } else {
             this.$message.error(res.msg);
           }

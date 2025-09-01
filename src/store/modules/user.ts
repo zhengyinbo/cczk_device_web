@@ -8,6 +8,7 @@ const InitUserInfo = {
 const state = {
   token: localStorage.getItem(TOKEN_NAME), // 默认token不走权限
   userInfo: InitUserInfo,
+  role: localStorage.getItem('role'),
 };
 
 const mutations = {
@@ -15,9 +16,15 @@ const mutations = {
     localStorage.setItem(TOKEN_NAME, token);
     state.token = token;
   },
+  setRole(state, role) {
+    localStorage.setItem('role', role);
+    state.role = role;
+  },
   removeToken(state) {
     localStorage.removeItem(TOKEN_NAME);
     state.token = '';
+    localStorage.removeItem('role');
+    state.role = '';
   },
   setUserInfo(state, userInfo) {
     state.userInfo = userInfo;
@@ -27,6 +34,7 @@ const mutations = {
 const getters = {
   token: (state) => state.token,
   roles: (state) => state.userInfo?.roles,
+  role: (state) => state.role,
 };
 
 const actions = {
@@ -91,6 +99,9 @@ const actions = {
   },
   async setToken({commit}, token) {
     commit('setToken', token);
+  },
+  async setRole({commit}, role) {
+    commit('setRole', role);
   }
 };
 
