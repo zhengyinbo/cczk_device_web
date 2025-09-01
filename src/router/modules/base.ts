@@ -59,7 +59,7 @@ export default [
       {
         path: 'index',
         name: 'Order',
-        component: () => import('@/pages/order/index.vue'),
+        component: () => import('@/pages/order/order.vue'),
         meta: { title: '订单管理'},
       }
     ],

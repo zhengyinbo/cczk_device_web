@@ -46,7 +46,7 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
-    console.log(response);
+    // console.log(response);
     if (response.status === 200) {
       const { data } = response;
       // if (data.code === CODE.REQUEST_SUCCESS) {
