@@ -54,11 +54,11 @@
           </t-form-item>
         </t-col>
         <t-col :span="4">
-          <t-form-item label="状态" name="status">
+          <t-form-item label="状态" name="onlineState">
             <t-select
-              v-model="formData.status"
+              v-model="formData.onlineState"
               class="form-item-content`"
-              :options="CONTRACT_STATUS_OPTIONS"
+              :options="ONLINE_STATUS_OPTIONS"
               placeholder="请选择状态"
             />
           </t-form-item>
@@ -84,6 +84,12 @@
         :headerAffixedTop="true"
         :headerAffixProps="{ offsetTop, container: getContainer }"
       >
+
+        <template #onlineState="{ row }">
+          <t-tag v-if="row.onlineState === ONLINE_STATUS.ONLINE" theme="success" variant="light">在线</t-tag>
+          <t-tag v-if="!row.onlineState || row.onlineState === ONLINE_STATUS.OFFLINE" theme="danger" variant="light">离线</t-tag>
+        </template>
+
         <template #op="slotProps">
           <a class="t-button-link" @click="rehandleClickOp(slotProps)">管理</a>
           <a class="t-button-link" @click="bandDevice(slotProps)">绑定用户</a>
@@ -149,7 +155,7 @@
 <script>
 import { prefix } from '@/config/global';
 
-import { CONTRACT_STATUS, CONTRACT_STATUS_OPTIONS } from '@/constants';
+import { ONLINE_STATUS, ONLINE_STATUS_OPTIONS } from '@/constants';
 import {
   deviceList,
   createDevice,
@@ -168,8 +174,8 @@ export default {
   components: { BandDeviceForm, DeviceForm },
   data() {
     return {
-      CONTRACT_STATUS,
-      CONTRACT_STATUS_OPTIONS,
+      ONLINE_STATUS,
+      ONLINE_STATUS_OPTIONS,
       prefix,
       formData: {
         deviceNo: '',
@@ -195,7 +201,7 @@ export default {
           ellipsis: true,
           colKey: 'userName',
         },
-        { title: '状态', colKey: 'status', width: 200, cell: { col: 'status' } },
+        { title: '状态', colKey: 'onlineState', width: 200, cell: { col: 'onlineState' } },
         {
           title: '设备类型',
           width: 200,
@@ -408,7 +414,7 @@ export default {
         user: this.userOptions,
         userId: row.row.userId,
         deviceId: row.row.deviceId,
-      }
+      };
       this.$refs.bandDeviceForm.setValue(data);
       this.bandDeviceVisible = true;
     },
