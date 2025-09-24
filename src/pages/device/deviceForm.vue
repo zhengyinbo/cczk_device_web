@@ -38,14 +38,6 @@
             </t-col>
           </t-row>
 
-            <t-row class="row-gap">
-            <t-col :span="6">
-              <t-form-item label="mac地址" name="macAdd">
-                <t-input v-model="formData.macAdd" :style="{ width: '322px' }" placeholder="请输入内容" />
-              </t-form-item>
-            </t-col>
-          </t-row>
-
           <t-form-item label="备注" name="remark">
             <t-textarea v-model="formData.remark" :height="124" placeholder="请输入备注" />
           </t-form-item>

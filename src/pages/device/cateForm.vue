@@ -9,12 +9,12 @@
     >
       <div class="form-basic-container">
         <div class="form-basic-item">
-          <div class="form-basic-container-title">设备类型信息</div>
+          <div class="form-basic-container-title">机器类型信息</div>
           <!-- 表单内容 -->
           <t-row class="row-gap">
             <t-input v-model="formData.deviceTypeId" v-show="false" />
             <t-col :span="6">
-              <t-form-item label="设备类型" name="deviceTypeName">
+              <t-form-item label="机器类型" name="deviceTypeName">
                 <t-input v-model="formData.deviceTypeName" :style="{ width: '322px' }" placeholder="请输入内容" />
               </t-form-item>
             </t-col>
@@ -28,7 +28,7 @@
 import { prefix } from '@/config/global';
 
 const FORM_RULES = {
-  deviceTypeName: [{ required: true, message: '请填写设备类型', type: 'error' }]
+  deviceTypeName: [{ required: true, message: '请填写机器类型', type: 'error' }]
 };
 
 export default {

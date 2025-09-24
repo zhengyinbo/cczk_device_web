@@ -12,6 +12,7 @@ const Api = {
   updateCate: 'deviceType/update',
   deleteCate: 'deviceType/delete',
   findAllCate: 'deviceType/findAll',
+  updateConfig: 'device/config/update',
 }
 
 export function deviceList(params) {
@@ -56,4 +57,8 @@ export function updateCate(params) {
 
 export function deleteCate(params) {
   return request.post(Api.deleteCate, params)
+}
+
+export function updateConfig(params) {
+  return request.post(Api.updateConfig, params)
 }

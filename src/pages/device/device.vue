@@ -10,7 +10,7 @@
     >
       <t-row :gutter="[8, 24]" class="row-gap">
         <t-col :span="4">
-          <t-form-item label="设备编号" name="deviceNo">
+          <t-form-item label="机器编号" name="deviceNo">
             <t-input
               v-model="formData.deviceNo"
               class="form-item-content"
@@ -35,7 +35,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="4">
-          <t-form-item label="设备类型" name="deviceTypeId">
+          <t-form-item label="机器类型" name="deviceTypeId">
             <t-select
               v-model="formData.deviceTypeId"
               :style="{ width: '322px' }"
@@ -84,21 +84,23 @@
         :headerAffixedTop="true"
         :headerAffixProps="{ offsetTop, container: getContainer }"
       >
-
         <template #onlineState="{ row }">
           <t-tag v-if="row.onlineState === ONLINE_STATUS.ONLINE" theme="success" variant="light">在线</t-tag>
-          <t-tag v-if="!row.onlineState || row.onlineState === ONLINE_STATUS.OFFLINE" theme="danger" variant="light">离线</t-tag>
+          <t-tag v-if="!row.onlineState || row.onlineState === ONLINE_STATUS.OFFLINE" theme="danger" variant="light"
+            >离线</t-tag
+          >
         </template>
 
         <template #op="slotProps">
           <a class="t-button-link" @click="rehandleClickOp(slotProps)">管理</a>
-          <a class="t-button-link" @click="bandDevice(slotProps)">绑定用户</a>
-          <a class="t-button-link" @click="unBandDevice(slotProps)">解绑用户</a>
+          <a class="t-button-link" @click="bandDevice(slotProps)">绑定</a>
+          <a class="t-button-link" @click="unBandDevice(slotProps)">解绑</a>
+          <a class="t-button-link" @click="configDevice(slotProps)">参数设置</a>
           <a class="t-button-link" @click="handleClickDelete(slotProps)">删除</a>
         </template>
       </t-table>
       <t-dialog
-        header="确认删除当前所选设备？"
+        header="确认删除当前所选机器？"
         :body="confirmBody"
         :visible.sync="confirmVisible"
         @confirm="onConfirmDelete"
@@ -107,7 +109,7 @@
       </t-dialog>
       <t-dialog
         :visible="visibleModelessDrag"
-        header="新增设备"
+        header="新增机器"
         mode="modeless"
         closeBtn=""
         @confirm="handleConfirm"
@@ -119,7 +121,7 @@
       </t-dialog>
       <t-dialog
         :visible="updateDialog"
-        header="修改设备"
+        header="修改机器"
         mode="modeless"
         closeBtn=""
         @confirm="updateHandleConfirm"
@@ -130,7 +132,7 @@
         </template>
       </t-dialog>
       <t-dialog
-        header="确认解绑当前设备？"
+        header="确认解绑当前机器？"
         :body="confirmBody"
         :visible.sync="unBandDeviceVisible"
         @confirm="unBandDeviceConfirm"
@@ -149,7 +151,20 @@
           <band-device-form ref="bandDeviceForm" />
         </template>
       </t-dialog>
+      <t-dialog
+        :visible="configVisible"
+        header="机器参数信息"
+        closeBtn=""
+        @confirm="handleConfigConfirm"
+        @cancel="handleConfigCancel"
+        width="auto"
+      >
+        <template #body>
+          <config-form ref="configForm" v-model="formData" />
+        </template>
+      </t-dialog>
     </div>
+<!--    <t-loading text="加载中..." :loading="loading"></t-loading>-->
   </div>
 </template>
 <script>
@@ -164,14 +179,17 @@ import {
   findAllCate,
   bandDevice,
   unBandDevice,
+  updateConfig,
 } from '@/api/Device';
 import { findAll } from '@/api/Users';
 import DeviceForm from '@/pages/device/deviceForm.vue';
 import BandDeviceForm from '@/pages/device/bandDevice.vue';
+import ConfigForm from '@/pages/device/config.vue';
+import { LoadingPlugin } from 'tdesign-vue';
 
 export default {
   name: 'list-table',
-  components: { BandDeviceForm, DeviceForm },
+  components: { ConfigForm, BandDeviceForm, DeviceForm },
   data() {
     return {
       ONLINE_STATUS,
@@ -188,7 +206,7 @@ export default {
       value: 'first',
       columns: [
         {
-          title: '设备编号',
+          title: '机器编号',
           fixed: 'left',
           width: 200,
           align: 'left',
@@ -203,16 +221,10 @@ export default {
         },
         { title: '状态', colKey: 'onlineState', width: 200, cell: { col: 'onlineState' } },
         {
-          title: '设备类型',
+          title: '机器类型',
           width: 200,
           ellipsis: true,
           colKey: 'deviceTypeName',
-        },
-        {
-          title: 'mac地址',
-          width: 200,
-          ellipsis: true,
-          colKey: 'macAdd',
         },
         {
           title: '备注',
@@ -252,8 +264,11 @@ export default {
       updateDialog: false,
       bandDeviceVisible: false,
       unBandDeviceVisible: false,
+      configVisible: false,
       userOptions: [],
       typeOptions: [],
+      config: {},
+      loading: false,
       msg: '',
     };
   },
@@ -339,6 +354,35 @@ export default {
       this.visibleModelessDrag = false;
       this.$refs.deviceForm.reset();
     },
+    handleConfigConfirm() {
+      LoadingPlugin(true);
+      this.loading = true;
+      this.$refs.configForm.validate().then((result) => {
+        if (result === true) {
+          // 校验通过
+          const data = this.$refs.configForm.getFormData();
+          updateConfig(data).then((res) => {
+            LoadingPlugin(false);
+            console.log(res);
+            if (res.code && res.code !== 0) {
+              this.$message.error(res.msg);
+            } else {
+              this.$message.success(res.data);
+              this.configVisible = false;
+              // 刷新list
+              this.queryList();
+            }
+          });
+        } else {
+          // 校验失败
+          console.log('校验失败:', result);
+        }
+      });
+    },
+    handleConfigCancel() {
+      this.configVisible = false;
+      this.$refs.deviceForm.reset();
+    },
     updateHandleConfirm() {
       const data = this.$refs.deviceForm.getFormData();
       updateDevice(data).then((res) => {
@@ -408,6 +452,10 @@ export default {
     },
     unBandDeviceCancel() {
       this.unBandDeviceVisible = false;
+    },
+    configDevice(row) {
+      this.configVisible = true;
+      this.$refs.configForm.setValue(row.row.config);
     },
     bandDevice(row) {
       const data = {

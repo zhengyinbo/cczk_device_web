@@ -16,7 +16,7 @@ const CODE = {
 
 const instance = axios.create({
   baseURL: API_HOST,
-  timeout: 1000,
+  timeout: 15000,
   withCredentials: true,
 });
 
@@ -31,9 +31,9 @@ instance.interceptors.request.use(
     const {token} = store.state.user  // 从 Vuex 里取
     if (token) {
       // config.headers.Authorization = `Bearer ${token}`  // 常见写法
-      console.log("token - ")
-      console.log(token)
-      console.log("token = ")
+      // console.log("token - ")
+      // console.log(token)
+      // console.log("token = ")
       config.headers.token = token
       // 也可能是 config.headers['token'] = token
       // 具体看你们后端怎么要求的
@@ -57,6 +57,7 @@ instance.interceptors.response.use(
     }
   },
   (err) => {
+    console.log(err);
     if (err.response.data.code && err.response.data.code === 1001) {
       // 未登录，清空本地缓存
       localStorage.removeItem('token')
