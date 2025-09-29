@@ -45,25 +45,25 @@ export default [
       },
     ],
   },
-  {
-    path: '/order',
-    component: Layout,
-    redirect: '/order/index',
-    name: 'order',
-    meta: {
-      title: '订单管理',
-      icon: 'widget',
-      single: true
-    },
-    children: [
-      {
-        path: 'index',
-        name: 'Order',
-        component: () => import('@/pages/order/order.vue'),
-        meta: { title: '订单管理'},
-      }
-    ],
-  },
+  // {
+  //   path: '/order',
+  //   component: Layout,
+  //   redirect: '/order/index',
+  //   name: 'order',
+  //   meta: {
+  //     title: '订单管理',
+  //     icon: 'widget',
+  //     single: true
+  //   },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Order',
+  //       component: () => import('@/pages/order/order.vue'),
+  //       meta: { title: '订单管理'},
+  //     }
+  //   ],
+  // },
   {
     path: '/deviceCate',
     component: Layout,

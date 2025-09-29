@@ -96,6 +96,7 @@
           <a class="t-button-link" @click="bandDevice(slotProps)">绑定</a>
           <a class="t-button-link" @click="unBandDevice(slotProps)">解绑</a>
           <a class="t-button-link" @click="configDevice(slotProps)">参数设置</a>
+          <a class="t-button-link" @click="queryOrder(slotProps)">账目查询</a>
           <a class="t-button-link" @click="handleClickDelete(slotProps)">删除</a>
         </template>
       </t-table>
@@ -163,8 +164,19 @@
           <config-form ref="configForm" v-model="formData" />
         </template>
       </t-dialog>
+      <t-dialog
+        :visible="queryOrderVisible"
+        header="机器运营账目"
+        closeBtn=""
+        @confirm="queryOrderConfirm"
+        @cancel="queryOrderCancel"
+        width="auto"
+      >
+        <template #body>
+          <my-roads :dataObj="orderData" />
+        </template>
+      </t-dialog>
     </div>
-<!--    <t-loading text="加载中..." :loading="loading"></t-loading>-->
   </div>
 </template>
 <script>
@@ -180,16 +192,18 @@ import {
   bandDevice,
   unBandDevice,
   updateConfig,
+  queryOrder,
 } from '@/api/Device';
 import { findAll } from '@/api/Users';
 import DeviceForm from '@/pages/device/deviceForm.vue';
 import BandDeviceForm from '@/pages/device/bandDevice.vue';
 import ConfigForm from '@/pages/device/config.vue';
+import MyRoads from '@/pages/device/info.vue';
 import { LoadingPlugin } from 'tdesign-vue';
 
 export default {
   name: 'list-table',
-  components: { ConfigForm, BandDeviceForm, DeviceForm },
+  components: { MyRoads, ConfigForm, BandDeviceForm, DeviceForm },
   data() {
     return {
       ONLINE_STATUS,
@@ -265,11 +279,13 @@ export default {
       bandDeviceVisible: false,
       unBandDeviceVisible: false,
       configVisible: false,
+      queryOrderVisible: false,
       userOptions: [],
       typeOptions: [],
       config: {},
       loading: false,
       msg: '',
+      orderData: {},
     };
   },
   computed: {
@@ -383,6 +399,12 @@ export default {
       this.configVisible = false;
       this.$refs.deviceForm.reset();
     },
+    queryOrderConfirm() {
+      this.queryOrderVisible = false;
+    },
+    queryOrderCancel() {
+      this.queryOrderVisible = false;
+    },
     updateHandleConfirm() {
       const data = this.$refs.deviceForm.getFormData();
       updateDevice(data).then((res) => {
@@ -456,6 +478,24 @@ export default {
     configDevice(row) {
       this.configVisible = true;
       this.$refs.configForm.setValue(row.row.config);
+    },
+    queryOrder(row) {
+      this.queryOrderVisible = true;
+      LoadingPlugin(true);
+      const data = row.row;
+      console.log(data);
+      queryOrder(data).then((res) => {
+        if (res.code === 0) {
+          const obj = JSON.parse(res.data);
+          this.orderData = obj;
+          console.log(this.orderData);
+        } else {
+          this.$message.error(res.msg);
+        }
+        // console.log(res);
+        LoadingPlugin(false);
+      });
+      // this.$refs.configForm.setValue(row.row.config);
     },
     bandDevice(row) {
       const data = {
