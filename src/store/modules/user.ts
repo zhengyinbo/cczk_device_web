@@ -8,7 +8,7 @@ const InitUserInfo = {
 const state = {
   token: localStorage.getItem(TOKEN_NAME), // 默认token不走权限
   userInfo: InitUserInfo,
-  role: localStorage.getItem('role'),
+  role: JSON.parse(localStorage.getItem('role')),
 };
 
 const mutations = {
@@ -17,7 +17,7 @@ const mutations = {
     state.token = token;
   },
   setRole(state, role) {
-    localStorage.setItem('role', role);
+    localStorage.setItem('role', JSON.stringify(role));
     state.role = role;
   },
   removeToken(state) {

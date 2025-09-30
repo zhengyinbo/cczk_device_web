@@ -34,9 +34,9 @@
           <t-dropdown :min-column-width="125" trigger="click">
             <template #dropdown>
               <t-dropdown-menu>
-                <t-dropdown-item class="operations-dropdown-container-item" @click="handleNav('/user/index')">
-                  <user-circle-icon />个人中心
-                </t-dropdown-item>
+<!--                <t-dropdown-item class="operations-dropdown-container-item" @click="handleNav('/user/index')">-->
+<!--                  <user-circle-icon />个人中心-->
+<!--                </t-dropdown-item>-->
                 <t-dropdown-item class="operations-dropdown-container-item" @click="handleLogout">
                   <poweroff-icon />退出登录
                 </t-dropdown-item>
@@ -158,7 +158,10 @@ export default Vue.extend({
     },
   },
   created() {
+    const role = this.$store.getters['user/role'];
     console.log(this.$store.getters['user/role'].name);
+    console.log(role);
+    console.log(typeof role);
     this.localUser = this.$store.getters['user/role'].name;
   },
   methods: {

@@ -9,7 +9,7 @@
   >
     <template v-if="type == 'password'">
       <t-form-item name="account">
-        <t-input v-model="formData.userName" size="large" placeholder="请输入账号：admin">
+        <t-input v-model="formData.userName" size="large" placeholder="请输入账号">
           <template #prefix-icon>
             <user-icon />
           </template>
@@ -23,7 +23,7 @@
           :type="showPsw ? 'text' : 'password'"
           clearable
           key="password"
-          placeholder="请输入登录密码：admin"
+          placeholder="请输入登录密码："
         >
           <template #prefix-icon>
             <lock-on-icon />
@@ -35,9 +35,9 @@
         </t-input>
       </t-form-item>
 
-      <div class="check-container remember-pwd">
-        <t-checkbox>记住账号</t-checkbox>
-      </div>
+<!--      <div class="check-container remember-pwd">-->
+<!--        <t-checkbox>记住账号</t-checkbox>-->
+<!--      </div>-->
     </template>
 
     <t-form-item v-if="type !== 'qrcode'" class="btn-container">
@@ -96,9 +96,13 @@ export default Vue.extend({
             this.$store.dispatch('user/setToken', res.data);
             // this.$store.dispatch('user/login', this.formData);
             getRole().then((r) => {
+              console.log(r.data);
               this.$store.dispatch('user/setRole', r.data);
               this.$message.success('登录成功');
-              this.$router.replace('/').catch(() => '');
+              const role = this.$store.getters['user/role'];
+              console.log(role);
+              console.log(typeof role);
+              this.$router.replace('/user1').catch(() => '');
             })
 
           } else {

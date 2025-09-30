@@ -371,7 +371,6 @@ export default {
     },
     handleConfigConfirm() {
       LoadingPlugin(true);
-      this.loading = true;
       this.$refs.configForm.validate().then((result) => {
         if (result === true) {
           // 校验通过

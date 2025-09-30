@@ -12,7 +12,7 @@ const Api = {
   updateCate: 'deviceType/update',
   deleteCate: 'deviceType/delete',
   findAllCate: 'deviceType/findAll',
-  updateConfig: 'device/config/update',
+  updateConfig: 'device/config/set',
   queryOrder: 'device/order/query',
 }
 

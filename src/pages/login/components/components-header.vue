@@ -12,8 +12,8 @@
     <!--      </t-button>-->
     <!--    </div>-->
   </header>
-</template> class="icon" />-->
-<
+</template>
+
 
 <script>
 import LogoFullIcon from '@/assets/assets-logo-full.svg';
