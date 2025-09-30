@@ -111,7 +111,6 @@
       <t-dialog
         :visible="visibleModelessDrag"
         header="新增机器"
-        mode="modeless"
         closeBtn=""
         @confirm="handleConfirm"
         @cancel="handleCancel"
@@ -123,7 +122,6 @@
       <t-dialog
         :visible="updateDialog"
         header="修改机器"
-        mode="modeless"
         closeBtn=""
         @confirm="updateHandleConfirm"
         @cancel="updateHandleCancel"
@@ -143,7 +141,6 @@
       <t-dialog
         :visible="bandDeviceVisible"
         header="绑定用户"
-        mode="modeless"
         closeBtn=""
         @confirm="bandDeviceConfirm"
         @cancel="bandDeviceCancel"
@@ -174,6 +171,7 @@
       >
         <template #body>
           <my-roads :dataObj="orderData" />
+          <my-account :dataObj="orderData" />
         </template>
       </t-dialog>
     </div>
@@ -184,26 +182,27 @@ import { prefix } from '@/config/global';
 
 import { ONLINE_STATUS, ONLINE_STATUS_OPTIONS } from '@/constants';
 import {
-  deviceList,
-  createDevice,
-  updateDevice,
-  deleteDevice,
-  findAllCate,
   bandDevice,
+  createDevice,
+  deleteDevice,
+  deviceList,
+  findAllCate,
+  queryOrder,
   unBandDevice,
   updateConfig,
-  queryOrder,
+  updateDevice,
 } from '@/api/Device';
 import { findAll } from '@/api/Users';
 import DeviceForm from '@/pages/device/deviceForm.vue';
 import BandDeviceForm from '@/pages/device/bandDevice.vue';
 import ConfigForm from '@/pages/device/config.vue';
-import MyRoads from '@/pages/device/info.vue';
+import Road from '@/pages/device/road.vue';
+import MyAccount from '@/pages/device/account.vue';
 import { LoadingPlugin } from 'tdesign-vue';
 
 export default {
   name: 'list-table',
-  components: { MyRoads, ConfigForm, BandDeviceForm, DeviceForm },
+  components: { MyAccount, MyRoads: Road, ConfigForm, BandDeviceForm, DeviceForm },
   data() {
     return {
       ONLINE_STATUS,
@@ -401,9 +400,11 @@ export default {
     },
     queryOrderConfirm() {
       this.queryOrderVisible = false;
+      this.orderData = {};
     },
     queryOrderCancel() {
       this.queryOrderVisible = false;
+      this.orderData = {};
     },
     updateHandleConfirm() {
       const data = this.$refs.deviceForm.getFormData();
@@ -483,11 +484,10 @@ export default {
       this.queryOrderVisible = true;
       LoadingPlugin(true);
       const data = row.row;
-      console.log(data);
       queryOrder(data).then((res) => {
         if (res.code === 0) {
-          const obj = JSON.parse(res.data);
-          this.orderData = obj;
+          this.$message.success("查询成功")
+          this.orderData = JSON.parse(res.data);
           console.log(this.orderData);
         } else {
           this.$message.error(res.msg);
