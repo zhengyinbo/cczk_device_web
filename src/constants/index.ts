@@ -4,8 +4,8 @@ interface IOption {
 }
 // 状态枚举
 export const CONTRACT_STATUS = {
-  NORMAL: "1",
-  DISABLE: "2"
+  NORMAL: "正常",
+  DISABLE: "禁用"
 };
 
 export const CONTRACT_STATUS_OPTIONS: Array<IOption> = [
