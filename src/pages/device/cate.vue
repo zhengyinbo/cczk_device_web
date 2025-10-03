@@ -12,12 +12,12 @@
         <t-col :span="4">
           <t-row :gutter="[16, 24]">
             <t-col :flex="4">
-              <t-form-item label="设备类型" name="deviceTypeName">
+              <t-form-item label="机器类型" name="deviceTypeName">
                 <t-input
                   v-model="formData.deviceTypeName"
                   class="form-item-content"
                   type="search"
-                  placeholder="请输入设备类型"
+                  placeholder="请输入机器类型"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -52,7 +52,7 @@
         </template>
       </t-table>
       <t-dialog
-        header="确认删除当前所选设备类型？"
+        header="确认删除当前所选机器类型？"
         :body="confirmBody"
         :visible.sync="confirmVisible"
         @confirm="onConfirmDelete"
@@ -61,7 +61,7 @@
       </t-dialog>
       <t-dialog
         :visible="visibleModelessDrag"
-        header="新增设备类型"
+        header="新增机器类型"
         mode="modeless"
         closeBtn=""
         @confirm="handleConfirm"
@@ -73,7 +73,7 @@
       </t-dialog>
       <t-dialog
         :visible="updateDialog"
-        header="修改设备类型"
+        header="修改机器类型"
         mode="modeless"
         draggable
         closeBtn
@@ -111,7 +111,7 @@ export default {
       value: 'first',
       columns: [
         {
-          title: '设备类型',
+          title: '机器类型',
           width: 200,
           ellipsis: true,
           colKey: 'deviceTypeName',

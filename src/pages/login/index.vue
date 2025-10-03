@@ -5,7 +5,7 @@
     <div class="login-container">
       <div class="title-container">
         <h1 class="title margin-no">登录到</h1>
-        <h1 class="title">长诚中科设备管理后台</h1>
+        <h1 class="title">长诚中科机器管理后台</h1>
       </div>
 
       <login v-if="type === 'login'" />

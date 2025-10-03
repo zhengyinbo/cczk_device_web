@@ -70,7 +70,7 @@ export default [
     redirect: '/deviceCate/index',
     name: 'deviceCate',
     meta: {
-      title: '设备类型管理',
+      title: '机器类型管理',
       icon: 'view-module',
       single: true
     },
@@ -79,7 +79,7 @@ export default [
         path: 'index',
         name: 'DeviceCate',
         component: () => import('@/pages/device/cate.vue'),
-        meta: { title: '设备类型管理'},
+        meta: { title: '机器类型管理'},
       },
     ],
   },
@@ -89,7 +89,7 @@ export default [
     redirect: '/device/index',
     name: 'device',
     meta: {
-      title: '设备管理',
+      title: '机器管理',
       icon: 'widget',
       single: true
     },
@@ -98,7 +98,7 @@ export default [
         path: 'index',
         name: 'Device',
         component: () => import('@/pages/device/device.vue'),
-        meta: { title: '设备管理' },
+        meta: { title: '机器管理' },
       },
     ],
   },

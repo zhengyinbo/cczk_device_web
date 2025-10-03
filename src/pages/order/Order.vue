@@ -20,7 +20,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="4">
-          <t-form-item label="设备类型" name="deviceTypeName">
+          <t-form-item label="机器类型" name="deviceTypeName">
             <t-select
               v-model="formData.deviceTypeName"
               :style="{ width: '220px' }"
@@ -40,7 +40,7 @@
           </t-form-item>
         </t-col>
         <t-col :span="4">
-          <t-form-item label="设备编号" name="deviceNo">
+          <t-form-item label="机器编号" name="deviceNo">
             <t-input v-model="formData.deviceNo" :style="{ width: '220px' }" placeholder="" />
           </t-form-item>
         </t-col>
@@ -128,13 +128,13 @@ export default {
           colKey: 'userName',
         },
         {
-          title: '设备类型',
+          title: '机器类型',
           width: 200,
           ellipsis: true,
           colKey: 'deviceTypeName',
         },
         {
-          title: '设备编号',
+          title: '机器编号',
           width: 200,
           ellipsis: true,
           colKey: 'deviceNo',
